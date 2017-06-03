@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Favorite Gifs</title>
+  <style type="text/css">
+    button,
+    div,
+    form,
+    input {
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Gif Search</h1>
+
+    <div id="gif-view"></div>
+
+    <form id="gif-form">
+      <label for="gif-input">Search a Gif</label>
+      <input type="text" id="gif-input">
+      <br>
+
+      <!-- Button triggers new movie to be added -->
+      <input id="add-gif" type="submit" value="Add a Gif">
+   
+    <div id="gif-img"></div>
+
+    </form>
+
+    <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript">
+   
+      var gifs = ["Lion", "Soccer", "Batman", "dogs"];
+
+// FUNCT TO DISPLAY AND LOAD BUTTONS
+
+      function renderButtons() {
+
+        for(i=0;i<gifs.length;i++) {
+
+           var boton = $("<button/>");
+
+           $("#gif-view").append(boton);
+
+           boton.addClass("giphy");
+
+           boton.text(gifs[i]);
+
+        }
+
+      }
+
+// DISPLAY BUTTON INFO
+      
+      function displayInfo() {
+           $("#gif-img").empty();
+           var gif = $(this).text();
+           console.log(gif);
+           var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + gif + "&api_key=dc6zaTOxFJmzC";
+
+           $.ajax({
+                
+                url: queryURL,
+                method:"GET"
+
+           }).done(function(response){
+
+                console.log(response);
+
+                for(i=0; i<10;i++) {
+
+                  var imgdiv = $("<img/>");
+                  imgdiv.attr('src', response.data[i].images.downsized_still.url);
+                  imgdiv.attr('still-src', response.data[i].images.downsized_still.url);
+                  imgdiv.attr('moving-src', response.data[i].images.downsized_large.url);
+                  imgdiv.addClass("imagen");
+                  $("#gif-img").append(imgdiv);
+              
+                  imgdiv.html(imgdiv);
+
+                } 
+
+
+           });
+
+      }
+
+
+var x = 0;
+
+$(document).on("click", ".imagen", function () {
+  
+  if (x == 0) {
+    var movingSrc = $(this).attr('moving-src');
+     
+     $(this).attr('src', movingSrc);
+     x = 1;
+     console.log(x);
+    
+  }
+  else {
+  var StillSrc = $(this).attr('still-src');
+     
+     $(this).attr('src', StillSrc);
+     x = 0;
+     console.log(x);
+  }
+  
+
+
+});     
+
+
+// ADD GIF BUTTON
+
+      $("#add-gif").on("click", function(event) {
+        
+        event.preventDefault();
+
+        var boton = $("<button/>");
+
+        $("#gif-view").append(boton);
+
+        boton.addClass("giphy");
+           
+        var inp = $("#gif-input").val();
+
+        boton.text(inp);
+
+       
+      });
+
+       $(document).on("click", ".giphy", displayInfo);
+
+       renderButtons();
+    </script>
+  </div>
+</body>
+
+</html>
